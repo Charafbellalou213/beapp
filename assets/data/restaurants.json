@@ -1,0 +1,64 @@
+{
+  "restaurants": [
+    {
+      "id": "rest_001",
+      "name": "Osteria del Borgo",
+      "type": "restaurant",
+      "description": "Osteria tradizionale vicino al centro storico, specializzata in piatti della cucina veneta con prodotti a km zero.",
+      "latitude": 45.4064,
+      "longitude": 11.8768,
+      "priceRange": "€€",
+      "localCultureConnection": "Propone ricette tramandate da generazioni, sostenendo produttori agricoli locali del padovano.",
+      "imagePath": "assets/images/osteria_del_borgo.jpg",
+      "typicalDishes": ["Bigoli in salsa", "Baccalà alla vicentina"],
+      "menu": [
+        {
+          "itemName": "Bigoli in salsa",
+          "description": "Pasta fresca tipica veneta con acciughe e cipolla",
+          "calories": 420,
+          "price": 9.5,
+          "isTypicalLocalProduct": true,
+          "category": "food"
+        },
+        {
+          "itemName": "Spritz",
+          "description": "Aperitivo veneto a base di Aperol o Select e prosecco",
+          "calories": 150,
+          "price": 4.0,
+          "isTypicalLocalProduct": true,
+          "category": "drink"
+        }
+      ]
+    },
+    {
+      "id": "rest_002",
+      "name": "Chiosco Prato della Valle",
+      "type": "kiosk",
+      "description": "Chiosco storico affacciato su Prato della Valle, tappa classica per uno spuntino tipico durante una passeggiata in centro.",
+      "latitude": 45.3982,
+      "longitude": 11.8759,
+      "priceRange": "€",
+      "localCultureConnection": "Punto di incontro informale della vita cittadina, sostiene la piccola economia di quartiere.",
+      "imagePath": "assets/images/chiosco_prato.jpg",
+      "typicalDishes": ["Tramezzino", "Spritz"],
+      "menu": [
+        {
+          "itemName": "Tramezzino",
+          "description": "Prodotto tipico molto diffuso nei bar del Veneto",
+          "calories": 280,
+          "price": 3.5,
+          "isTypicalLocalProduct": true,
+          "category": "snack"
+        },
+        {
+          "itemName": "Caffè",
+          "description": "Espresso classico italiano",
+          "calories": 5,
+          "price": 1.2,
+          "isTypicalLocalProduct": false,
+          "category": "drink"
+        }
+      ]
+    }
+  ]
+}

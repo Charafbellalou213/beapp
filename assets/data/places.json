@@ -1,0 +1,30 @@
+{
+  "places": [
+    {
+      "id": "place_001",
+      "name": "Prato della Valle",
+      "description": "Una delle piazze più grandi d'Europa, con l'isola Memmia circondata da statue e canali. Punto di ritrovo storico e luogo ideale per iniziare un percorso a piedi in centro.",
+      "category": "history",
+      "latitude": 45.3987,
+      "longitude": 11.8767,
+      "points": 10,
+      "averageVisitTimeMinutes": 20,
+      "imagePath": "assets/images/prato_della_valle.jpg",
+      "isVisited": false,
+      "averageRating": 4.6
+    },
+    {
+      "id": "place_002",
+      "name": "Basilica di Sant'Antonio",
+      "description": "Basilica pontificia meta di pellegrinaggio, con opere di Donatello e la tomba di Sant'Antonio. Una delle tappe culturali più significative di Padova.",
+      "category": "culture",
+      "latitude": 45.4009,
+      "longitude": 11.8827,
+      "points": 15,
+      "averageVisitTimeMinutes": 35,
+      "imagePath": "assets/images/basilica_sant_antonio.jpg",
+      "isVisited": false,
+      "averageRating": 4.8
+    }
+  ]
+}
