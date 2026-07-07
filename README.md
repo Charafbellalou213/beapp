@@ -29,6 +29,23 @@ flutter run
 
 Per la Google Maps API Key, vedi le istruzioni nella Fase 10 del progetto (la chiave reale non va mai committata su GitHub — vedi `.gitignore`).
 
+## Configurazione richiesta prima della demo
+
+- **Google Maps API key (Android):** in `android/local.properties` sostituisci `MAPS_API_KEY=YOUR_GOOGLE_MAPS_API_KEY` con una chiave reale (Google Cloud Console → abilita "Maps SDK for Android"). Senza chiave valida la mappa resta grigia/vuota, il resto dell'app funziona comunque.
+- **Google Maps API key (iOS):** in `ios/Runner/AppDelegate.swift` sostituisci `"YOUR_GOOGLE_MAPS_API_KEY"` (richiede macOS + Xcode + CocoaPods per buildare).
+- **API dati attività:** `lib/utils/api_config.dart` contiene un `baseUrl` segnaposto non raggiungibile di proposito. Se il corso fornisce un endpoint reale, sostituiscilo lì. Senza endpoint reale l'app funziona comunque: la Profile screen userà sempre stime locali.
+- **Web:** `google_maps_flutter` su web richiede un tag `<script>` con API key in `web/index.html` (non incluso: la app è pensata soprattutto per Android/iOS).
+
+## Checklist pre-esame (Fase 17)
+
+- [x] `flutter analyze` — nessun problema
+- [x] `flutter test` — tutti i test passano (modelli, servizi, provider, navigazione)
+- [x] `flutter build apk --debug` — build Android completa senza errori
+- [x] `flutter run -d chrome` — avvio senza eccezioni runtime
+- [ ] Sostituire le API key segnaposto (Maps + API attività) prima della presentazione
+- [ ] Aggiungere gli altri luoghi/locali reali in `assets/data/places.json` e `restaurants.json`
+- [ ] Provare il flusso completo su un device/emulatore Android reale (login → percorso → mappa → visita → recensione → profilo)
+
 ## Struttura del progetto
 
 ```
