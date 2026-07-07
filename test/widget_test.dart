@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -50,7 +51,7 @@ void main() {
 
     await tester.tap(find.text('Mappa'));
     await tester.pump();
-    expect(find.text('Map Screen'), findsOneWidget);
+    expect(find.byType(GoogleMap), findsOneWidget);
 
     await tester.tap(find.text('Profilo'));
     await tester.pump();

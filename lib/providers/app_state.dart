@@ -5,6 +5,7 @@ import '../models/restaurant.dart';
 import '../models/review.dart';
 import '../models/user_stats.dart';
 import '../services/local_data_service.dart';
+import '../services/route_service.dart';
 import '../services/storage_service.dart';
 
 /// Punti assegnati per aver "visitato" (mangiato/bevuto qualcosa presso) un
@@ -26,12 +27,17 @@ class _BadgeThresholds {
 /// `StorageService`. Le schermate leggono questo stato con
 /// `Consumer<AppState>` o `context.watch<AppState>()`.
 class AppState extends ChangeNotifier {
-  AppState({LocalDataService? localDataService, StorageService? storageService})
-      : _localDataService = localDataService ?? LocalDataService(),
-        _storageService = storageService ?? StorageService();
+  AppState({
+    LocalDataService? localDataService,
+    StorageService? storageService,
+    RouteService? routeService,
+  })  : _localDataService = localDataService ?? LocalDataService(),
+        _storageService = storageService ?? StorageService(),
+        _routeService = routeService ?? RouteService();
 
   final LocalDataService _localDataService;
   final StorageService _storageService;
+  final RouteService _routeService;
 
   bool isBootstrapping = true;
 
@@ -49,7 +55,40 @@ class AppState extends ChangeNotifier {
   /// consuma dovrebbe azzerarlo con [clearLastUnlockedBadgeId].
   String? lastUnlockedBadgeId;
 
+  RouteLength selectedRouteLength = RouteLength.medium;
+  SuggestedRoute? currentRoute;
+
   bool get isLoggedIn => username != null && username!.isNotEmpty;
+
+  void selectRoute(
+    RouteLength length, {
+    required double startLatitude,
+    required double startLongitude,
+  }) {
+    selectedRouteLength = length;
+    currentRoute = _routeService.buildRoute(
+      availablePlaces: places,
+      length: length,
+      startLatitude: startLatitude,
+      startLongitude: startLongitude,
+    );
+    notifyListeners();
+  }
+
+  Future<void> completeCurrentRoute() async {
+    final route = currentRoute;
+    final stats = userStats;
+    if (route == null || stats == null) return;
+
+    final updated = stats.copyWith(
+      totalPoints: stats.totalPoints + route.totalPoints,
+      totalCalories: stats.totalCalories + route.estimatedCalories,
+      totalDistanceKm: stats.totalDistanceKm + route.distanceKm,
+      completedRoutes: stats.completedRoutes + 1,
+    );
+    await _applyStatsUpdate(updated);
+    currentRoute = null;
+  }
 
   Future<void> bootstrap() async {
     isBootstrapping = true;
