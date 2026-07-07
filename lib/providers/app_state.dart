@@ -118,6 +118,7 @@ class AppState extends ChangeNotifier {
       startLatitude: startLatitude,
       startLongitude: startLongitude,
     );
+    _storageService.savePreferredRouteLength(length.name);
     notifyListeners();
   }
 
@@ -172,6 +173,14 @@ class AppState extends ChangeNotifier {
   }
 
   Future<void> _restoreSession() async {
+    final savedRouteLengthName = await _storageService.loadPreferredRouteLength();
+    if (savedRouteLengthName != null) {
+      selectedRouteLength = RouteLength.values.firstWhere(
+        (length) => length.name == savedRouteLengthName,
+        orElse: () => RouteLength.medium,
+      );
+    }
+
     final savedUsername = await _storageService.loadUsername();
     if (savedUsername == null || savedUsername.isEmpty) return;
 

@@ -124,6 +124,32 @@ void main() {
     expect(notifications, greaterThanOrEqualTo(1));
   });
 
+  test(
+    'Fase 16: dopo un riavvio (nuova istanza di AppState) tutti i dati persistiti sono ripristinati',
+    () async {
+      final first = AppState();
+      await first.bootstrap();
+      await first.login('mario');
+      await first.markPlaceVisited(first.places.first.id);
+      await first.markRestaurantVisited(first.restaurants.first.id);
+      await first.addReview(
+        Review(placeId: first.places.first.id, rating: 5, createdAt: DateTime.now()),
+      );
+      first.selectRoute(RouteLength.short, startLatitude: 45.3987, startLongitude: 11.8767);
+
+      final second = AppState();
+      await second.bootstrap();
+
+      expect(second.username, 'mario');
+      expect(second.userStats?.totalPoints, first.userStats?.totalPoints);
+      expect(second.userStats?.visitedPlaceIds, first.userStats?.visitedPlaceIds);
+      expect(second.userStats?.visitedRestaurantIds, first.userStats?.visitedRestaurantIds);
+      expect(second.userStats?.reviews, hasLength(1));
+      expect(second.userStats?.unlockedBadgeIds, contains('first_step'));
+      expect(second.selectedRouteLength, RouteLength.short);
+    },
+  );
+
   test('selectRoute costruisce un percorso e completeCurrentRoute assegna punti/calorie', () async {
     final appState = AppState();
     await appState.bootstrap();
