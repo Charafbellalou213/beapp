@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:beapp/models/review.dart';
 import 'package:beapp/providers/app_state.dart';
+import 'package:beapp/services/route_service.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -121,5 +122,26 @@ void main() {
     await appState.bootstrap();
 
     expect(notifications, greaterThanOrEqualTo(1));
+  });
+
+  test('selectRoute costruisce un percorso e completeCurrentRoute assegna punti/calorie', () async {
+    final appState = AppState();
+    await appState.bootstrap();
+    await appState.login('mario');
+
+    appState.selectRoute(RouteLength.long, startLatitude: 45.3987, startLongitude: 11.8767);
+
+    expect(appState.currentRoute, isNotNull);
+    final route = appState.currentRoute!;
+    final expectedPlacePoints = route.places.fold<int>(0, (sum, p) => sum + p.points);
+
+    await appState.completeCurrentRoute();
+
+    expect(appState.currentRoute, isNull);
+    expect(appState.userStats?.completedRoutes, 1);
+    expect(appState.userStats?.totalPoints, expectedPlacePoints + kRouteCompletionBonus);
+    expect(appState.userStats?.totalCalories, route.estimatedCalories);
+    expect(appState.userStats?.totalDistanceKm, route.distanceKm);
+    expect(appState.places.every((p) => !route.places.map((r) => r.id).contains(p.id) || p.isVisited), true);
   });
 }

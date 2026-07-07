@@ -13,6 +13,10 @@ import '../services/storage_service.dart';
 /// JSON; per i ristoranti usiamo un valore fisso più semplice da spiegare.
 const int kRestaurantVisitPoints = 15;
 
+/// Bonus assegnato per aver completato un intero percorso (oltre ai punti
+/// dei singoli luoghi, assegnati separatamente da `markPlaceVisited`).
+const int kRouteCompletionBonus = 20;
+
 /// Soglie minime per sbloccare i badge di `kAllBadges` (vedi models/badge.dart).
 class _BadgeThresholds {
   static const int localExplorerPlaces = 3;
@@ -75,13 +79,22 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Segna come visitati tutti i luoghi del percorso corrente (i punti dei
+  /// singoli luoghi arrivano da qui, tramite `markPlaceVisited`), poi
+  /// aggiunge calorie/distanza stimate e un bonus fisso di completamento.
   Future<void> completeCurrentRoute() async {
     final route = currentRoute;
+    if (route == null) return;
+
+    for (final place in route.places) {
+      await markPlaceVisited(place.id);
+    }
+
     final stats = userStats;
-    if (route == null || stats == null) return;
+    if (stats == null) return;
 
     final updated = stats.copyWith(
-      totalPoints: stats.totalPoints + route.totalPoints,
+      totalPoints: stats.totalPoints + kRouteCompletionBonus,
       totalCalories: stats.totalCalories + route.estimatedCalories,
       totalDistanceKm: stats.totalDistanceKm + route.distanceKm,
       completedRoutes: stats.completedRoutes + 1,
