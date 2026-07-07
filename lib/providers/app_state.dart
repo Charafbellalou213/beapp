@@ -1,12 +1,15 @@
 import 'package:flutter/foundation.dart';
 
+import '../models/daily_activity_summary.dart';
 import '../models/place.dart';
 import '../models/restaurant.dart';
 import '../models/review.dart';
 import '../models/user_stats.dart';
+import '../services/activity_data_service.dart';
 import '../services/local_data_service.dart';
 import '../services/route_service.dart';
 import '../services/storage_service.dart';
+import '../utils/date_utils.dart';
 
 /// Punti assegnati per aver "visitato" (mangiato/bevuto qualcosa presso) un
 /// locale tipico. I luoghi turistici hanno un valore `points` proprio nel
@@ -35,13 +38,16 @@ class AppState extends ChangeNotifier {
     LocalDataService? localDataService,
     StorageService? storageService,
     RouteService? routeService,
+    ActivityDataService? activityDataService,
   })  : _localDataService = localDataService ?? LocalDataService(),
         _storageService = storageService ?? StorageService(),
-        _routeService = routeService ?? RouteService();
+        _routeService = routeService ?? RouteService(),
+        _activityDataService = activityDataService ?? ActivityDataService();
 
   final LocalDataService _localDataService;
   final StorageService _storageService;
   final RouteService _routeService;
+  final ActivityDataService _activityDataService;
 
   bool isBootstrapping = true;
 
@@ -62,7 +68,43 @@ class AppState extends ChangeNotifier {
   RouteLength selectedRouteLength = RouteLength.medium;
   SuggestedRoute? currentRoute;
 
+  DailyActivitySummary? activitySummary;
+  bool isLoadingActivityData = false;
+
   bool get isLoggedIn => username != null && username!.isNotEmpty;
+
+  /// Recupera dall'API i dati di attività (calorie/passi/distanza/esercizio)
+  /// dell'ultimo giorno disponibile (mai il giorno corrente, vedi
+  /// `latestAvailableActivityDate`). Se l'API non è raggiungibile o non ha
+  /// dati, `activitySummary.isFromApi` sarà `false`: l'app continua a
+  /// funzionare mostrando che i dati non sono disponibili.
+  Future<void> loadActivityData() async {
+    final name = username;
+    if (name == null) return;
+
+    isLoadingActivityData = true;
+    notifyListeners();
+
+    final summary = await _activityDataService.fetchSummaryForDate(
+      name,
+      latestAvailableActivityDate(),
+    );
+    activitySummary = summary;
+
+    if (summary.isFromApi) {
+      final stats = userStats;
+      if (stats != null) {
+        final updated = stats.copyWith(
+          totalSteps: summary.steps,
+          lastDataUpdateDate: summary.date,
+        );
+        await _applyStatsUpdate(updated);
+      }
+    }
+
+    isLoadingActivityData = false;
+    notifyListeners();
+  }
 
   void selectRoute(
     RouteLength length, {
