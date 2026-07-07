@@ -7,7 +7,7 @@ import 'providers/app_state.dart';
 void main() {
   runApp(
     ChangeNotifierProvider(
-      create: (_) => AppState()..loadInitialData(),
+      create: (_) => AppState()..bootstrap(),
       child: const BeappApp(),
     ),
   );

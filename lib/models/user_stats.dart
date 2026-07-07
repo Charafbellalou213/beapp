@@ -7,6 +7,7 @@ class UserStats {
   final double totalDistanceKm;
   final int totalSteps;
   final List<String> visitedPlaceIds;
+  final List<String> visitedRestaurantIds;
   final List<Review> reviews;
   final List<String> unlockedBadgeIds;
   final int completedRoutes;
@@ -19,6 +20,7 @@ class UserStats {
     this.totalDistanceKm = 0,
     this.totalSteps = 0,
     this.visitedPlaceIds = const [],
+    this.visitedRestaurantIds = const [],
     this.reviews = const [],
     this.unlockedBadgeIds = const [],
     this.completedRoutes = 0,
@@ -35,6 +37,9 @@ class UserStats {
       totalDistanceKm: (json['totalDistanceKm'] as num?)?.toDouble() ?? 0,
       totalSteps: json['totalSteps'] as int? ?? 0,
       visitedPlaceIds: (json['visitedPlaceIds'] as List<dynamic>? ?? [])
+          .map((id) => id as String)
+          .toList(),
+      visitedRestaurantIds: (json['visitedRestaurantIds'] as List<dynamic>? ?? [])
           .map((id) => id as String)
           .toList(),
       reviews: (json['reviews'] as List<dynamic>? ?? [])
@@ -58,6 +63,7 @@ class UserStats {
       'totalDistanceKm': totalDistanceKm,
       'totalSteps': totalSteps,
       'visitedPlaceIds': visitedPlaceIds,
+      'visitedRestaurantIds': visitedRestaurantIds,
       'reviews': reviews.map((review) => review.toJson()).toList(),
       'unlockedBadgeIds': unlockedBadgeIds,
       'completedRoutes': completedRoutes,
@@ -71,6 +77,7 @@ class UserStats {
     double? totalDistanceKm,
     int? totalSteps,
     List<String>? visitedPlaceIds,
+    List<String>? visitedRestaurantIds,
     List<Review>? reviews,
     List<String>? unlockedBadgeIds,
     int? completedRoutes,
@@ -83,6 +90,7 @@ class UserStats {
       totalDistanceKm: totalDistanceKm ?? this.totalDistanceKm,
       totalSteps: totalSteps ?? this.totalSteps,
       visitedPlaceIds: visitedPlaceIds ?? this.visitedPlaceIds,
+      visitedRestaurantIds: visitedRestaurantIds ?? this.visitedRestaurantIds,
       reviews: reviews ?? this.reviews,
       unlockedBadgeIds: unlockedBadgeIds ?? this.unlockedBadgeIds,
       completedRoutes: completedRoutes ?? this.completedRoutes,

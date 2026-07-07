@@ -30,11 +30,36 @@ class BeappApp extends StatelessWidget {
       ),
       home: Consumer<AppState>(
         builder: (context, appState, _) {
+          if (appState.isBootstrapping) {
+            return const _SplashScreen();
+          }
           if (!appState.isLoggedIn) {
             return const LoginScreen();
           }
           return const MainNavigation();
         },
+      ),
+    );
+  }
+}
+
+class _SplashScreen extends StatelessWidget {
+  const _SplashScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.eco, size: 48),
+            SizedBox(height: 16),
+            Text('Beapp', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            SizedBox(height: 24),
+            CircularProgressIndicator(),
+          ],
+        ),
       ),
     );
   }
