@@ -1,0 +1,50 @@
+name: beapp
+description: "Beapp - turismo sostenibile a Padova (SDG 8.9)"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # State management
+  provider: ^6.1.2
+
+  # Persistenza locale semplice (username, punti, badge, ecc.)
+  shared_preferences: ^2.3.3
+
+  # Mappa e marker
+  google_maps_flutter: ^2.9.0
+
+  # Posizione utente (per suggerire il percorso più vicino)
+  geolocator: ^13.0.2
+
+  # Chiamate HTTP verso l'API dati attività (calorie/passi/distanza)
+  http: ^1.2.2
+
+  # Stelle per le recensioni (1-5)
+  flutter_rating_bar: ^4.0.1
+
+  # Grafico semplice per la sezione statistiche
+  fl_chart: ^0.69.2
+
+  # Formattazione date (es. "data ultimo aggiornamento dati")
+  intl: ^0.19.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/data/
+    - assets/images/
