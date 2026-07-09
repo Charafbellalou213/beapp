@@ -59,6 +59,289 @@
           "category": "drink"
         }
       ]
+    },
+    {
+     "id": "rest_003",
+      "name": "Osteria l'Anfora",
+      "type": "restaurant",
+      "address": "Via Soncin, 13",
+      "description": "Un'osteria storica dall'atmosfera conviviale e verace nel Ghetto.",
+      "latitude": 45.4073,
+      "longitude": 11.8768,
+      "priceRange": "€€",
+      "localCultureConnection": "Cucina padovana tradizionale con ricette storiche venete.",
+      "imagePath": "assets/images/osteria_anfora.jpg",
+      "typicalDishes": [
+        "Bigoli in salsa",
+        "Pasta e fagioli alla veneta",
+        "Fegato alla veneziana",
+        "Sarde in saor"
+      ],
+      "menu": [
+        {
+          "itemName": "Bigoli in salsa",
+          "description": "Bigoli con acciughe e cipolla",
+          "calories": 450,
+          "price": 12.0,
+          "isTypicalLocalProduct": true,
+          "category": "food"
+        },
+        {
+          "itemName": "Pasta e fagioli",
+          "description": "Pasta e fagioli alla veneta, densa",
+          "calories": 380,
+          "price": 10.0,
+          "isTypicalLocalProduct": true,
+          "category": "food"
+        },
+        {
+          "itemName": "Fegato alla veneziana con polenta",
+          "description": "Ricetta tradizionale con cipolle",
+          "calories": 550,
+          "price": 15.0,
+          "isTypicalLocalProduct": true,
+          "category": "food"
+        },
+        {
+          "itemName": "Sarde in saor",
+          "description": "Sarde marinate alla veneziana",
+          "calories": 320,
+          "price": 9.0,
+          "isTypicalLocalProduct": true,
+          "category": "food"
+        }
+      ]
+    },
+    {
+      "id": "rest_004",
+      "name": "Osteria dal Capo",
+      "type": "restaurant",
+      "address": "Via Obizzi, 2",
+      "description": "Tradizione pura a due passi dal Duomo, in un ambiente intimo.",
+      "latitude": 45.4066,
+      "longitude": 11.8749,
+      "priceRange": "€€",
+      "localCultureConnection": "Piatti della tradizione padovana e veneta.",
+      "imagePath": "assets/images/osteria_dal_capo.jpg",
+      "typicalDishes": [
+        "Gallina Padovana",
+        "Baccalà alla vicentina",
+        "Tagliere locale"
+      ],
+      "menu": [
+        {
+          "itemName": "Gallina Padovana in dolcegarbo",
+          "description": "Ricetta tradizionale padovana",
+          "calories": 480,
+          "price": 16.0,
+          "isTypicalLocalProduct": true,
+          "category": "food"
+        },
+        {
+          "itemName": "Zuppa del giorno in pagnotta",
+          "description": "Zuppa servita nel pane",
+          "calories": 500,
+          "price": 12.0,
+          "isTypicalLocalProduct": false,
+          "category": "food"
+        },
+        {
+          "itemName": "Baccalà alla vicentina con polenta",
+          "description": "Stoccafisso con polenta",
+          "calories": 650,
+          "price": 18.0,
+          "isTypicalLocalProduct": true,
+          "category": "food"
+        },
+        {
+          "itemName": "Tagliere di salumi e formaggi locali",
+          "description": "Prodotti veneti selezionati",
+          "calories": 600,
+          "price": 14.0,
+          "isTypicalLocalProduct": true,
+          "category": "food"
+        }
+      ]
+    },
+    {
+      "id": "rest_005",
+      "name": "Osteria Ai Scarponi",
+      "type": "restaurant",
+      "address": "Via Cesare Battisti, 138",
+      "description": "Cucina curata che rispetta stagionalità e radici venete.",
+      "latitude": 45.4018,
+      "longitude": 11.8785,
+      "priceRange": "€€€",
+      "localCultureConnection": "Tradizione veneta con ingredienti stagionali.",
+      "imagePath": "assets/images/ai_scarponi.jpg",
+      "typicalDishes": [
+        "Bigoli al ragù d'anatra",
+        "Baccalà alla vicentina",
+        "Spuncioti"
+      ],
+      "menu": [
+        {
+          "itemName": "Bigoli freschi al ragù d'anatra",
+          "description": "Pasta fresca con ragù d'anatra",
+          "calories": 580,
+          "price": 17.0,
+          "isTypicalLocalProduct": true,
+          "category": "food"
+        },
+        {
+          "itemName": "Baccalà alla vicentina",
+          "description": "Stoccafisso secondo tradizione",
+          "calories": 700,
+          "price": 25.0,
+          "isTypicalLocalProduct": true,
+          "category": "food"
+        },
+        {
+          "itemName": "Spuncioti misti",
+          "description": "Tre pezzi a scelta",
+          "calories": 350,
+          "price": 9.0,
+          "isTypicalLocalProduct": true,
+          "category": "food"
+        },
+        {
+          "itemName": "Polpette al sugo con ricotta affumicata",
+          "description": "Polpette tradizionali",
+          "calories": 520,
+          "price": 18.0,
+          "isTypicalLocalProduct": false,
+          "category": "food"
+        }
+      ]
+    },
+    {
+      "id": "rest_006",
+      "name": "Trattoria dei Paccagnella",
+      "type": "restaurant",
+      "address": "Via del Santo, 113",
+      "description": "Eleganza e tradizione vicino alla Basilica del Santo.",
+      "latitude": 45.4060,
+      "longitude": 11.8821,
+      "priceRange": "€€€",
+      "imagePath": "assets/images/paccagnella.jpg",
+      "menu": [
+        {
+          "itemName": "Gallina Padovana ubriaca",
+          "description": "Cotta nel vino",
+          "calories": 450,
+          "price": 18.0,
+          "isTypicalLocalProduct": true,
+          "category": "food"
+        },
+        {
+          "itemName": "Risotto con i fegatini",
+          "description": "Specialità stagionale",
+          "calories": 500,
+          "price": 14.0,
+          "isTypicalLocalProduct": true,
+          "category": "food"
+        },
+        {
+          "itemName": "Pasticcio di lasagne alla padovana",
+          "description": "Lasagne tradizionali",
+          "calories": 600,
+          "price": 13.0,
+          "isTypicalLocalProduct": true,
+          "category": "food"
+        },
+        {
+          "itemName": "Dolce Pazientina",
+          "description": "Dolce tipico padovano",
+          "calories": 450,
+          "price": 7.0,
+          "isTypicalLocalProduct": true,
+          "category": "dessert"
+        }
+      ]
+    },
+    {
+      "id": "rest_007",
+      "name": "Bacaro Padovano",
+      "type": "restaurant",
+      "address": "Via S. Gregorio Barbarigo, 3",
+      "description": "Atmosfera informale ideale per assaggiare specialità venete.",
+      "latitude": 45.4054,
+      "longitude": 11.8740,
+      "priceRange": "€€",
+      "imagePath": "assets/images/bacaro_padovano.jpg",
+      "menu": [
+        {
+          "itemName": "Folpetti cònsi su polenta",
+          "description": "Moscardini conditi",
+          "calories": 350,
+          "price": 12.0,
+          "isTypicalLocalProduct": true,
+          "category": "food"
+        },
+        {
+          "itemName": "Seppie in tocio con polenta",
+          "description": "Seppie in umido",
+          "calories": 480,
+          "price": 18.0,
+          "isTypicalLocalProduct": true,
+          "category": "food"
+        },
+        {
+          "itemName": "Baccalà mantecato con crostini",
+          "description": "Crema di baccalà",
+          "calories": 450,
+          "price": 13.0,
+          "isTypicalLocalProduct": true,
+          "category": "food"
+        },
+        {
+          "itemName": "Bigoli all'amatriciana veneta",
+          "description": "Con guanciale locale",
+          "calories": 620,
+          "price": 12.0,
+          "isTypicalLocalProduct": true,
+          "category": "food"
+        }
+      ]
+    },
+    {
+      "id": "rest_006",
+      "name": "La Folperia",
+      "type": "street_food",
+      "address": "Piazza della Frutta, 1",
+      "description": "Banco storico di street food amato dai padovani.",
+      "latitude": 45.4070,
+      "longitude": 11.8760,
+      "priceRange": "€",
+      "imagePath": "assets/images/la_folperia.jpg",
+      "menu": [
+        {
+          "itemName": "Folpetti bolliti",
+          "description": "Moscardini bolliti",
+          "calories": 120,
+          "price": 7.0,
+          "isTypicalLocalProduct": true,
+          "category": "food"
+        },
+        {
+          "itemName": "Bovoletti",
+          "description": "Lumachine con aglio e prezzemolo",
+          "calories": 90,
+          "price": 6.0,
+          "isTypicalLocalProduct": true,
+          "category": "food"
+        },
+        {
+          "itemName": "Masenete",
+          "description": "Granchietti di laguna stagionali",
+          "calories": 150,
+          "price": 8.0,
+          "isTypicalLocalProduct": true,
+          "category": "food"
+        }
+      ]
     }
+
   ]
 }
+
