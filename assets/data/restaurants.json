@@ -1,67 +1,8 @@
 {
   "restaurants": [
+    
     {
-      "id": "rest_001",
-      "name": "Osteria del Borgo",
-      "type": "restaurant",
-      "description": "Osteria tradizionale vicino al centro storico, specializzata in piatti della cucina veneta con prodotti a km zero.",
-      "latitude": 45.4064,
-      "longitude": 11.8768,
-      "priceRange": "€€",
-      "localCultureConnection": "Propone ricette tramandate da generazioni, sostenendo produttori agricoli locali del padovano.",
-      "imagePath": "assets/images/osteria_del_borgo.jpg",
-      "typicalDishes": ["Bigoli in salsa", "Baccalà alla vicentina"],
-      "menu": [
-        {
-          "itemName": "Bigoli in salsa",
-          "description": "Pasta fresca tipica veneta con acciughe e cipolla",
-          "calories": 420,
-          "price": 9.5,
-          "isTypicalLocalProduct": true,
-          "category": "food"
-        },
-        {
-          "itemName": "Spritz",
-          "description": "Aperitivo veneto a base di Aperol o Select e prosecco",
-          "calories": 150,
-          "price": 4.0,
-          "isTypicalLocalProduct": true,
-          "category": "drink"
-        }
-      ]
-    },
-    {
-      "id": "rest_002",
-      "name": "Chiosco Prato della Valle",
-      "type": "kiosk",
-      "description": "Chiosco storico affacciato su Prato della Valle, tappa classica per uno spuntino tipico durante una passeggiata in centro.",
-      "latitude": 45.3982,
-      "longitude": 11.8759,
-      "priceRange": "€",
-      "localCultureConnection": "Punto di incontro informale della vita cittadina, sostiene la piccola economia di quartiere.",
-      "imagePath": "assets/images/chiosco_prato.jpg",
-      "typicalDishes": ["Tramezzino", "Spritz"],
-      "menu": [
-        {
-          "itemName": "Tramezzino",
-          "description": "Prodotto tipico molto diffuso nei bar del Veneto",
-          "calories": 280,
-          "price": 3.5,
-          "isTypicalLocalProduct": true,
-          "category": "snack"
-        },
-        {
-          "itemName": "Caffè",
-          "description": "Espresso classico italiano",
-          "calories": 5,
-          "price": 1.2,
-          "isTypicalLocalProduct": false,
-          "category": "drink"
-        }
-      ]
-    },
-    {
-     "id": "rest_003",
+     "id": "rest_001",
       "name": "Osteria l'Anfora",
       "type": "restaurant",
       "address": "Via Soncin, 13",
@@ -113,13 +54,13 @@
       ]
     },
     {
-      "id": "rest_004",
+      "id": "rest_002",
       "name": "Osteria dal Capo",
       "type": "restaurant",
       "address": "Via Obizzi, 2",
       "description": "Tradizione pura a due passi dal Duomo, in un ambiente intimo.",
-      "latitude": 45.4066,
-      "longitude": 11.8749,
+      "latitude": 45.406498,
+      "longitude": 11.873026,
       "priceRange": "€€",
       "localCultureConnection": "Piatti della tradizione padovana e veneta.",
       "imagePath": "assets/images/osteria_dal_capo.jpg",
@@ -164,7 +105,7 @@
       ]
     },
     {
-      "id": "rest_005",
+      "id": "rest_003",
       "name": "Osteria Ai Scarponi",
       "type": "restaurant",
       "address": "Via Cesare Battisti, 138",
@@ -215,52 +156,7 @@
       ]
     },
     {
-      "id": "rest_006",
-      "name": "Trattoria dei Paccagnella",
-      "type": "restaurant",
-      "address": "Via del Santo, 113",
-      "description": "Eleganza e tradizione vicino alla Basilica del Santo.",
-      "latitude": 45.4060,
-      "longitude": 11.8821,
-      "priceRange": "€€€",
-      "imagePath": "assets/images/paccagnella.jpg",
-      "menu": [
-        {
-          "itemName": "Gallina Padovana ubriaca",
-          "description": "Cotta nel vino",
-          "calories": 450,
-          "price": 18.0,
-          "isTypicalLocalProduct": true,
-          "category": "food"
-        },
-        {
-          "itemName": "Risotto con i fegatini",
-          "description": "Specialità stagionale",
-          "calories": 500,
-          "price": 14.0,
-          "isTypicalLocalProduct": true,
-          "category": "food"
-        },
-        {
-          "itemName": "Pasticcio di lasagne alla padovana",
-          "description": "Lasagne tradizionali",
-          "calories": 600,
-          "price": 13.0,
-          "isTypicalLocalProduct": true,
-          "category": "food"
-        },
-        {
-          "itemName": "Dolce Pazientina",
-          "description": "Dolce tipico padovano",
-          "calories": 450,
-          "price": 7.0,
-          "isTypicalLocalProduct": true,
-          "category": "dessert"
-        }
-      ]
-    },
-    {
-      "id": "rest_007",
+      "id": "rest_004",
       "name": "Bacaro Padovano",
       "type": "restaurant",
       "address": "Via S. Gregorio Barbarigo, 3",
@@ -268,7 +164,14 @@
       "latitude": 45.4054,
       "longitude": 11.8740,
       "priceRange": "€€",
+      "localCultureConnection": "Propone piatti e cicchetti della tradizione veneta in un contesto informale tipico del centro storico.",
       "imagePath": "assets/images/bacaro_padovano.jpg",
+      "typicalDishes": [
+        "Folpetti cònsi",
+        "Seppie in tocio",
+        "Baccalà mantecato",
+        "Bigoli"
+      ],
       "menu": [
         {
           "itemName": "Folpetti cònsi su polenta",
@@ -305,7 +208,7 @@
       ]
     },
     {
-      "id": "rest_006",
+      "id": "rest_005",
       "name": "La Folperia",
       "type": "street_food",
       "address": "Piazza della Frutta, 1",
@@ -313,7 +216,13 @@
       "latitude": 45.4070,
       "longitude": 11.8760,
       "priceRange": "€",
+      "localCultureConnection": "Rappresenta lo street food tradizionale padovano legato al mercato storico di Piazza della Frutta.",
       "imagePath": "assets/images/la_folperia.jpg",
+      "typicalDishes": [
+        "Folpetti bolliti",
+        "Bovoletti",
+        "Masenete"
+      ],
       "menu": [
         {
           "itemName": "Folpetti bolliti",
