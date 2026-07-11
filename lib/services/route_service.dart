@@ -4,13 +4,18 @@ import '../utils/constants.dart';
 import '../utils/distance_calculator.dart';
 
 enum RouteLength {
-  short(placeCount: 2, label: 'Breve'),
-  medium(placeCount: 4, label: 'Medio'),
-  long(placeCount: 6, label: 'Lungo');
+  short(targetDistanceKm: 1.5, maxDistanceKm: 2.1, label: 'Breve'),
+  medium(targetDistanceKm: 3.0, maxDistanceKm: 3.0, label: 'Medio'),
+  long(targetDistanceKm: double.infinity, maxDistanceKm: double.infinity, label: 'Lungo');
 
-  final int placeCount;
+  final double targetDistanceKm;
+  final double maxDistanceKm;
   final String label;
-  const RouteLength({required this.placeCount, required this.label});
+  const RouteLength({
+    required this.targetDistanceKm,
+    required this.maxDistanceKm,
+    required this.label,
+  });
 }
 
 class SuggestedRoute {
@@ -20,6 +25,8 @@ class SuggestedRoute {
   final int estimatedMinutes;
   final double estimatedCalories;
   final int totalPoints;
+  final double startLatitude;
+  final double startLongitude;
 
   const SuggestedRoute({
     required this.length,
@@ -28,12 +35,13 @@ class SuggestedRoute {
     required this.estimatedMinutes,
     required this.estimatedCalories,
     required this.totalPoints,
+    required this.startLatitude,
+    required this.startLongitude,
   });
 }
 
-/// Costruisce un percorso a piedi semplice: ordina i luoghi per vicinanza
-/// (nearest-neighbor, senza ottimizzazione TSP) a partire da un punto di
-/// partenza, fino al numero di tappe previsto dalla lunghezza scelta.
+// ordina i luoghi per vicinanza (nearest-neighbor) e si ferma alla prima
+// soglia raggiunta tra distanza obiettivo e numero massimo di tappe
 class RouteService {
   SuggestedRoute buildRoute({
     required List<Place> availablePlaces,
@@ -47,38 +55,41 @@ class RouteService {
 
     var currentLat = startLatitude;
     var currentLng = startLongitude;
+    var accumulatedDistance = 0.0;
 
-    while (ordered.length < length.placeCount && remaining.isNotEmpty) {
+    while (remaining.isNotEmpty) {
       remaining.sort(
         (a, b) => haversineDistanceKm(currentLat, currentLng, a.latitude, a.longitude)
             .compareTo(haversineDistanceKm(currentLat, currentLng, b.latitude, b.longitude)),
       );
-      final next = remaining.removeAt(0);
+      final next = remaining.first;
+      final legDistance = haversineDistanceKm(currentLat, currentLng, next.latitude, next.longitude);
+
+      // la prima tappa va sempre inclusa, il limite di distanza vale dalla seconda in poi
+      if (ordered.isNotEmpty && accumulatedDistance + legDistance > length.maxDistanceKm) {
+        break;
+      }
+
+      remaining.removeAt(0);
       ordered.add(next);
+      accumulatedDistance += legDistance;
       currentLat = next.latitude;
       currentLng = next.longitude;
     }
 
-    var totalDistance = 0.0;
-    var lat = startLatitude;
-    var lng = startLongitude;
-    for (final place in ordered) {
-      totalDistance += haversineDistanceKm(lat, lng, place.latitude, place.longitude);
-      lat = place.latitude;
-      lng = place.longitude;
-    }
-
-    final walkingMinutes = (totalDistance / AppConstants.walkingSpeedKmh * 60).round();
+    final walkingMinutes = (accumulatedDistance / AppConstants.walkingSpeedKmh * 60).round();
     final visitMinutes = ordered.fold<int>(0, (sum, p) => sum + p.averageVisitTimeMinutes);
     final totalPoints = ordered.fold<int>(0, (sum, p) => sum + p.points);
 
     return SuggestedRoute(
       length: length,
       places: ordered,
-      distanceKm: totalDistance,
+      distanceKm: accumulatedDistance,
       estimatedMinutes: walkingMinutes + visitMinutes,
-      estimatedCalories: estimateCaloriesForDistance(totalDistance, userWeightKg: userWeightKg),
+      estimatedCalories: estimateCaloriesForDistance(accumulatedDistance, userWeightKg: userWeightKg),
       totalPoints: totalPoints,
+      startLatitude: startLatitude,
+      startLongitude: startLongitude,
     );
   }
 }
