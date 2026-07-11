@@ -36,6 +36,8 @@ dependencies:
 
   # Formattazione date (es. "data ultimo aggiornamento dati")
   intl: ^0.19.0
+  # Verifica scadenza access/refresh token dell'API IMPACT
+  jwt_decoder: ^2.0.1
 
 dev_dependencies:
   flutter_test:
