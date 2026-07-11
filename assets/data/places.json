@@ -168,6 +168,97 @@
      "imagePath": "assets/images/piazze_padova.jpg",
      "isVisited": false,
      "averageRating": 4.8
+    },
+    {
+      "id": "place_014",
+      "name": "Piazza dei Signori e Torre dell'Orologio",
+      "description": "Elegante piazza padovana dominata dal Palazzo del Capitanio e dalla sua famosa Torre dell'Orologio astronomico.",
+      "category": "history",
+      "latitude": 45.4079,
+      "longitude": 11.8745,
+      "points": 10,
+      "averageVisitTimeMinutes": 30,
+      "imagePath": "assets/images/piazza_signori.jpg",
+      "isVisited": false,
+      "averageRating": 4.8
+    },
+    {
+      "id": "place_015",
+      "name": "Basilica di Santa Giustina",
+      "description": "Imponente basilica affacciata su Prato della Valle, una delle più grandi della cristianità, ricca di opere d'arte.",
+      "category": "religious",
+      "latitude": 45.3965,
+      "longitude": 11.8785,
+      "points": 10,
+      "averageVisitTimeMinutes": 45,
+      "imagePath": "assets/images/santa_giustina.jpg",
+      "isVisited": false,
+      "averageRating": 4.6
+    },
+    {
+      "id": "place_016",
+      "name": "MUSME - Museo di Storia della Medicina",
+      "description": "Museo interattivo all'avanguardia dedicato alla straordinaria storia medica e scientifica dell'Università di Padova.",
+      "category": "science",
+      "latitude": 45.4050,
+      "longitude": 11.8810,
+      "points": 20,
+      "averageVisitTimeMinutes": 90,
+      "imagePath": "assets/images/musme.jpg",
+      "isVisited": false,
+      "averageRating": 4.9
+    },
+    {
+      "id": "place_017",
+      "name": "Chiesa degli Eremitani",
+      "description": "Storica chiesa gotica parzialmente distrutta nella Seconda Guerra Mondiale, conserva preziosi affreschi del Mantegna.",
+      "category": "art",
+      "latitude": 45.4102,
+      "longitude": 11.8780,
+      "points": 15,
+      "averageVisitTimeMinutes": 40,
+      "imagePath": "assets/images/chiesa_eremitani.jpg",
+      "isVisited": false,
+      "averageRating": 4.5
+    },
+    {
+      "id": "place_018",
+      "name": "Oratorio di San Giorgio",
+      "description": "Piccolo gioiello situato sul sagrato del Santo, custodisce un bellissimo ciclo di affreschi trecenteschi di Altichiero da Zevio.",
+      "category": "art",
+      "latitude": 45.4057,
+      "longitude": 11.8805,
+      "points": 15,
+      "averageVisitTimeMinutes": 30,
+      "imagePath": "assets/images/oratorio_san_giorgio.jpg",
+      "isVisited": false,
+      "averageRating": 4.7
+    },
+    {
+      "id": "place_019",
+      "name": "Loggia e Odeo Cornaro",
+      "description": "Splendido complesso architettonico rinascimentale, commissionato da Alvise Cornaro per rappresentazioni teatrali e musicali.",
+      "category": "history",
+      "latitude": 45.4035,
+      "longitude": 11.8825,
+      "points": 10,
+      "averageVisitTimeMinutes": 30,
+      "imagePath": "assets/images/loggia_cornaro.jpg",
+      "isVisited": false,
+      "averageRating": 4.6
+    },
+    {
+      "id": "place_020",
+      "name": "Parco Treves de' Bonfili",
+      "description": "Il primo parco all'inglese progettato a Padova dall'architetto Jappelli, un'oasi romantica con percorsi sinuosi e finte rovine.",
+      "category": "nature",
+      "latitude": 45.4020,
+      "longitude": 11.8830,
+      "points": 10,
+      "averageVisitTimeMinutes": 45,
+      "imagePath": "assets/images/parco_treves.jpg",
+      "isVisited": false,
+      "averageRating": 4.4
     }
   ]
 }
