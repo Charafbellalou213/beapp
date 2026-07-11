@@ -5,6 +5,7 @@ enum RestaurantType {
   kiosk('kiosk'),
   bar('bar'),
   bakery('bakery'),
+  streetFood('street_food'),
   localShop('local_shop');
 
   final String jsonValue;
@@ -26,7 +27,8 @@ class Restaurant {
   final double latitude;
   final double longitude;
   final String priceRange;
-  final String localCultureConnection;
+  final String? address;
+  final String? localCultureConnection;
   final String? imagePath;
   final List<String> typicalDishes;
   final List<MenuItem> menu;
@@ -39,9 +41,10 @@ class Restaurant {
     required this.latitude,
     required this.longitude,
     required this.priceRange,
-    required this.localCultureConnection,
+    this.address,
+    this.localCultureConnection,
     this.imagePath,
-    required this.typicalDishes,
+    this.typicalDishes = const [],
     required this.menu,
   });
 
@@ -54,9 +57,10 @@ class Restaurant {
       latitude: (json['latitude'] as num).toDouble(),
       longitude: (json['longitude'] as num).toDouble(),
       priceRange: json['priceRange'] as String,
-      localCultureConnection: json['localCultureConnection'] as String,
+      address: json['address'] as String?,
+      localCultureConnection: json['localCultureConnection'] as String?,
       imagePath: json['imagePath'] as String?,
-      typicalDishes: (json['typicalDishes'] as List<dynamic>)
+      typicalDishes: (json['typicalDishes'] as List<dynamic>? ?? [])
           .map((dish) => dish as String)
           .toList(),
       menu: (json['menu'] as List<dynamic>)
@@ -74,6 +78,7 @@ class Restaurant {
       'latitude': latitude,
       'longitude': longitude,
       'priceRange': priceRange,
+      'address': address,
       'localCultureConnection': localCultureConnection,
       'imagePath': imagePath,
       'typicalDishes': typicalDishes,

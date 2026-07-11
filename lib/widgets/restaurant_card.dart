@@ -14,6 +14,8 @@ IconData restaurantTypeIcon(RestaurantType type) {
       return Icons.bakery_dining;
     case RestaurantType.localShop:
       return Icons.shopping_bag;
+    case RestaurantType.streetFood:
+      return Icons.tapas;
   }
 }
 
@@ -29,6 +31,8 @@ String restaurantTypeLabel(RestaurantType type) {
       return 'Panetteria';
     case RestaurantType.localShop:
       return 'Bottega locale';
+    case RestaurantType.streetFood:
+      return 'Street food';
   }
 }
 

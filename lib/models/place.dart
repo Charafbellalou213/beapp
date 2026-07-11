@@ -5,7 +5,9 @@ enum PlaceCategory {
   nature('nature'),
   innovation('innovation'),
   localProducts('local_products'),
-  art('art');
+  art('art'),
+  religious('religious'),
+  science('science');
 
   final String jsonValue;
   const PlaceCategory(this.jsonValue);

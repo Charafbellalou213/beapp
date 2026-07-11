@@ -5,9 +5,6 @@ import 'package:flutter/services.dart' show rootBundle;
 import '../models/place.dart';
 import '../models/restaurant.dart';
 
-/// Carica i dati locali di luoghi e ristoranti/locali dai file JSON in
-/// `assets/data/`. Aggiungere nuovi luoghi/locali nel JSON non richiede
-/// nessuna modifica a questo service.
 class LocalDataService {
   Future<List<Place>> loadPlaces() async {
     final raw = await rootBundle.loadString('assets/data/places.json');

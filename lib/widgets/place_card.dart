@@ -19,6 +19,10 @@ IconData placeCategoryIcon(PlaceCategory category) {
       return Icons.shopping_bag;
     case PlaceCategory.art:
       return Icons.palette;
+    case PlaceCategory.religious:
+      return Icons.church;
+    case PlaceCategory.science:
+      return Icons.science;
   }
 }
 
@@ -38,6 +42,10 @@ String placeCategoryLabel(PlaceCategory category) {
       return 'Prodotti locali';
     case PlaceCategory.art:
       return 'Arte';
+    case PlaceCategory.religious:
+      return 'Religioso';
+    case PlaceCategory.science:
+      return 'Scienza';
   }
 }
 

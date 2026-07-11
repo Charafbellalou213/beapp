@@ -43,14 +43,38 @@ void main() {
     expect(route.estimatedCalories, greaterThan(0));
   });
 
-  test('buildRoute rispetta il numero massimo di tappe della lunghezza scelta', () {
-    final route = RouteService().buildRoute(
+  test(
+    'buildRoute breve esclude una tappa troppo lontana per l\'obiettivo di distanza',
+    () {
+      // 'b' dista circa 2.6 km da 'a', troppo per il "Breve" (max 2.1 km)
+      final route = RouteService().buildRoute(
+        availablePlaces: places,
+        length: RouteLength.short,
+        startLatitude: 45.40,
+        startLongitude: 11.87,
+      );
+
+      expect(route.places, hasLength(1));
+      expect(route.places.first.id, 'a');
+      expect(route.distanceKm, lessThan(RouteLength.short.maxDistanceKm));
+    },
+  );
+
+  test('un percorso lungo può includere una tappa che uno breve esclude', () {
+    final shortRoute = RouteService().buildRoute(
       availablePlaces: places,
       length: RouteLength.short,
       startLatitude: 45.40,
       startLongitude: 11.87,
     );
+    final longRoute = RouteService().buildRoute(
+      availablePlaces: places,
+      length: RouteLength.long,
+      startLatitude: 45.40,
+      startLongitude: 11.87,
+    );
 
-    expect(route.places.length, lessThanOrEqualTo(RouteLength.short.placeCount));
+    expect(shortRoute.places.length, lessThan(longRoute.places.length));
+    expect(shortRoute.distanceKm, lessThan(longRoute.distanceKm));
   });
 }

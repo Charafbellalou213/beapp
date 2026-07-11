@@ -1,31 +1,33 @@
-/// Riepilogo delle attività di un giorno, usato nella Profile/Stats screen.
-/// Se `isFromApi` è false i valori sono stime locali (formula calorie/distanza),
-/// non dati reali del dispositivo.
 class DailyActivitySummary {
   final DateTime date;
-  final double calories;
-  final double distanceKm;
-  final int steps;
-  final int exerciseMinutes;
-  final bool isFromApi;
+  final double totalCalories;
+  final int totalSteps;
+  final double totalDistanceKm;
+  final bool hasCaloriesData;
+  final bool hasStepsData;
+  final bool hasDistanceData;
 
   const DailyActivitySummary({
     required this.date,
-    required this.calories,
-    required this.distanceKm,
-    required this.steps,
-    required this.exerciseMinutes,
-    required this.isFromApi,
+    required this.totalCalories,
+    required this.totalSteps,
+    required this.totalDistanceKm,
+    required this.hasCaloriesData,
+    required this.hasStepsData,
+    required this.hasDistanceData,
   });
 
-  factory DailyActivitySummary.estimated(DateTime date) {
+  factory DailyActivitySummary.empty(DateTime date) {
     return DailyActivitySummary(
       date: date,
-      calories: 0,
-      distanceKm: 0,
-      steps: 0,
-      exerciseMinutes: 0,
-      isFromApi: false,
+      totalCalories: 0,
+      totalSteps: 0,
+      totalDistanceKm: 0,
+      hasCaloriesData: false,
+      hasStepsData: false,
+      hasDistanceData: false,
     );
   }
+
+  bool get hasAnyData => hasCaloriesData || hasStepsData || hasDistanceData;
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Chiamato `AppBadge` (non `Badge`) per non entrare in conflitto con il
-/// widget `Badge` già presente in `package:flutter/material.dart`.
+// si chiama AppBadge e non Badge per non confonderlo col widget Badge di material.dart
 class AppBadge {
   final String id;
   final String name;
@@ -16,9 +15,6 @@ class AppBadge {
   });
 }
 
-/// Catalogo statico di tutti i badge ottenibili nell'app.
-/// `UserStats.unlockedBadgeIds` salva solo gli id: questa lista fornisce
-/// nome, descrizione e icona da mostrare per ciascun id sbloccato.
 const List<AppBadge> kAllBadges = [
   AppBadge(
     id: 'first_step',
@@ -41,7 +37,8 @@ const List<AppBadge> kAllBadges = [
   AppBadge(
     id: 'sustainable_tourist',
     name: 'Sustainable Tourist',
-    description: 'Hai bruciato/stimato 1000 calorie camminando.',
+    description:
+        'Hai bruciato (o stimato di bruciare) 1000 calorie camminando.',
     icon: Icons.eco,
   ),
   AppBadge(
@@ -57,9 +54,21 @@ const List<AppBadge> kAllBadges = [
     icon: Icons.rate_review,
   ),
   AppBadge(
-    id: 'walking_day',
-    name: 'Walking Day',
-    description: 'Hai raggiunto un buon numero di passi in un giorno.',
+    id: 'route_completed',
+    name: 'Route Completed',
+    description: 'Hai completato il tuo primo percorso BeLocal.',
+    icon: Icons.flag_circle,
+  ),
+  AppBadge(
+    id: 'sustainable_walker',
+    name: 'Sustainable Walker',
+    description: 'Hai percorso almeno 2 km completando percorsi BeLocal.',
     icon: Icons.hiking,
+  ),
+  AppBadge(
+    id: 'active_tourist',
+    name: 'Active Tourist',
+    description: 'Ieri hai fatto più di 5000 passi (dati reali IMPACT).',
+    icon: Icons.directions_walk,
   ),
 ];
