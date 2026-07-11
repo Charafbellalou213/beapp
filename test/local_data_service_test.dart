@@ -6,17 +6,17 @@ void main() {
 
   final service = LocalDataService();
 
-  test('loadPlaces legge i 2 luoghi da assets/data/places.json', () async {
+  test('loadPlaces legge i 20 luoghi da assets/data/places.json', () async {
     final places = await service.loadPlaces();
 
-    expect(places, hasLength(2));
+    expect(places, hasLength(20));
     expect(places.first.name, "Prato della Valle");
   });
 
-  test('loadRestaurants legge i 2 locali da assets/data/restaurants.json', () async {
+  test('loadRestaurants legge i 6 locali da assets/data/restaurants.json', () async {
     final restaurants = await service.loadRestaurants();
 
-    expect(restaurants, hasLength(2));
+    expect(restaurants, hasLength(6));
     expect(restaurants.every((r) => r.menu.isNotEmpty), true);
   });
 }
