@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 
 import '../models/daily_activity_summary.dart';
@@ -5,49 +7,58 @@ import '../models/place.dart';
 import '../models/restaurant.dart';
 import '../models/review.dart';
 import '../models/user_stats.dart';
-import '../services/activity_data_service.dart';
+import '../services/impact_service.dart';
 import '../services/local_data_service.dart';
 import '../services/route_service.dart';
 import '../services/storage_service.dart';
-import '../utils/date_utils.dart';
+import '../utils/calorie_calculator.dart';
+import '../utils/distance_calculator.dart';
 
-/// Punti assegnati per aver "visitato" (mangiato/bevuto qualcosa presso) un
-/// locale tipico. I luoghi turistici hanno un valore `points` proprio nel
-/// JSON; per i ristoranti usiamo un valore fisso più semplice da spiegare.
 const int kRestaurantVisitPoints = 15;
-
-/// Bonus assegnato per aver completato un intero percorso (oltre ai punti
-/// dei singoli luoghi, assegnati separatamente da `markPlaceVisited`).
 const int kRouteCompletionBonus = 20;
 
-/// Soglie minime per sbloccare i badge di `kAllBadges` (vedi models/badge.dart).
 class _BadgeThresholds {
   static const int localExplorerPlaces = 3;
   static const int padovaAmbassadorPlaces = 5;
   static const double sustainableTouristCalories = 1000;
   static const int reviewHelperReviews = 3;
-  static const int walkingDaySteps = 6000;
+  static const int routeCompletedRoutes = 1;
+  static const double sustainableWalkerDistanceKm = 2;
+  static const int activeTouristSteps = 5000;
 }
 
-/// Stato centrale dell'app: dati caricati dai JSON locali e progressi
-/// dell'utente corrente, persistiti in shared_preferences tramite
-/// `StorageService`. Le schermate leggono questo stato con
-/// `Consumer<AppState>` o `context.watch<AppState>()`.
+class _RouteRecommendationThresholds {
+  static const int shortMaxSteps = 3000;
+  static const int mediumMaxSteps = 8000;
+}
+
+class _SimulationStep {
+  final double latitude;
+  final double longitude;
+  final Place? reachedPlace;
+
+  const _SimulationStep({
+    required this.latitude,
+    required this.longitude,
+    this.reachedPlace,
+  });
+}
+
 class AppState extends ChangeNotifier {
   AppState({
     LocalDataService? localDataService,
     StorageService? storageService,
     RouteService? routeService,
-    ActivityDataService? activityDataService,
-  })  : _localDataService = localDataService ?? LocalDataService(),
-        _storageService = storageService ?? StorageService(),
-        _routeService = routeService ?? RouteService(),
-        _activityDataService = activityDataService ?? ActivityDataService();
+    ImpactService? impactService,
+  }) : _localDataService = localDataService ?? LocalDataService(),
+       _storageService = storageService ?? StorageService(),
+       _routeService = routeService ?? RouteService(),
+       _impactService = impactService ?? ImpactService();
 
   final LocalDataService _localDataService;
   final StorageService _storageService;
   final RouteService _routeService;
-  final ActivityDataService _activityDataService;
+  final ImpactService _impactService;
 
   bool isBootstrapping = true;
 
@@ -60,50 +71,122 @@ class AppState extends ChangeNotifier {
   bool isLoadingData = false;
   String? loadError;
 
-  /// Ultimo badge sbloccato durante l'ultima azione, utile per mostrare un
-  /// piccolo messaggio di congratulazioni nella UI. La schermata che lo
-  /// consuma dovrebbe azzerarlo con [clearLastUnlockedBadgeId].
   String? lastUnlockedBadgeId;
 
   RouteLength selectedRouteLength = RouteLength.medium;
   SuggestedRoute? currentRoute;
 
-  DailyActivitySummary? activitySummary;
-  bool isLoadingActivityData = false;
+  bool isSimulationRunning = false;
+  int simulationPlacesReached = 0;
+  double simulatedDistanceKm = 0;
+  double simulatedCalories = 0;
+  double? simulatedLatitude;
+  double? simulatedLongitude;
+  Timer? _simulationTimer;
+
+  DailyActivitySummary? impactActivitySummary;
+  bool isLoadingImpactData = false;
+  String? impactError;
 
   bool get isLoggedIn => username != null && username!.isNotEmpty;
 
-  /// Recupera dall'API i dati di attività (calorie/passi/distanza/esercizio)
-  /// dell'ultimo giorno disponibile (mai il giorno corrente, vedi
-  /// `latestAvailableActivityDate`). Se l'API non è raggiungibile o non ha
-  /// dati, `activitySummary.isFromApi` sarà `false`: l'app continua a
-  /// funzionare mostrando che i dati non sono disponibili.
-  Future<void> loadActivityData() async {
-    final name = username;
-    if (name == null) return;
+  RouteLength get recommendedRouteLength {
+    final summary = impactActivitySummary;
+    if (summary == null || !summary.hasStepsData) return RouteLength.medium;
 
-    isLoadingActivityData = true;
+    if (summary.totalSteps < _RouteRecommendationThresholds.shortMaxSteps) {
+      return RouteLength.short;
+    }
+    if (summary.totalSteps <= _RouteRecommendationThresholds.mediumMaxSteps) {
+      return RouteLength.medium;
+    }
+    return RouteLength.long;
+  }
+
+  Future<bool> loginImpact() async {
+    isLoadingImpactData = true;
+    impactError = null;
     notifyListeners();
 
-    final summary = await _activityDataService.fetchSummaryForDate(
-      name,
-      latestAvailableActivityDate(),
-    );
-    activitySummary = summary;
+    final success = await _attemptImpactLogin();
 
-    if (summary.isFromApi) {
-      final stats = userStats;
-      if (stats != null) {
-        final updated = stats.copyWith(
-          totalSteps: summary.steps,
-          lastDataUpdateDate: summary.date,
-        );
-        await _applyStatsUpdate(updated);
-      }
+    isLoadingImpactData = false;
+    notifyListeners();
+    return success;
+  }
+
+  Future<bool> _attemptImpactLogin() async {
+    final reachable = await _impactService.ping();
+    if (!reachable) {
+      impactError =
+          'Servizio IMPACT non raggiungibile: controlla la connessione a Internet.';
+      return false;
     }
 
-    isLoadingActivityData = false;
+    final success = await _impactService.login();
+    if (!success) {
+      impactError =
+          'Accesso a IMPACT non riuscito: verifica le credenziali configurate.';
+    }
+    return success;
+  }
+
+  Future<void> logoutImpact() async {
+    await _impactService.logout();
+    impactActivitySummary = null;
+    impactError = null;
     notifyListeners();
+  }
+
+  Future<bool> hasValidImpactSession() => _impactService.hasValidSession();
+
+  Future<void> loadYesterdayActivityData() => _loadImpactSummary(null);
+
+  Future<void> loadActivityDataForDate(DateTime date) =>
+      _loadImpactSummary(date);
+
+  Future<void> _loadImpactSummary(DateTime? referenceDate) async {
+    isLoadingImpactData = true;
+    impactError = null;
+    notifyListeners();
+
+    var hasSession = await _impactService.hasValidSession();
+    if (!hasSession) {
+      hasSession = await _attemptImpactLogin();
+    }
+
+    if (hasSession) {
+      final summary = await _impactService.getDailyActivitySummary(
+        referenceDate,
+      );
+      impactActivitySummary = summary;
+
+      if (!summary.hasAnyData) {
+        impactError = 'Nessun dato disponibile dal paziente per questa data.';
+      } else if (summary.hasStepsData &&
+          summary.totalSteps > _BadgeThresholds.activeTouristSteps) {
+        await _unlockBadgeManually('active_tourist');
+      }
+    } else {
+      // se login/ping falliscono teniamo comunque un riepilogo vuoto invece di null
+      impactActivitySummary = DailyActivitySummary.empty(
+        _impactService.resolveAvailableDate(referenceDate),
+      );
+    }
+
+    isLoadingImpactData = false;
+    notifyListeners();
+  }
+
+  Future<void> _unlockBadgeManually(String badgeId) async {
+    final stats = userStats;
+    if (stats == null || stats.unlockedBadgeIds.contains(badgeId)) return;
+
+    userStats = stats.copyWith(
+      unlockedBadgeIds: [...stats.unlockedBadgeIds, badgeId],
+    );
+    lastUnlockedBadgeId = badgeId;
+    await _persistStats();
   }
 
   void selectRoute(
@@ -122,9 +205,6 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Segna come visitati tutti i luoghi del percorso corrente (i punti dei
-  /// singoli luoghi arrivano da qui, tramite `markPlaceVisited`), poi
-  /// aggiunge calorie/distanza stimate e un bonus fisso di completamento.
   Future<void> completeCurrentRoute() async {
     final route = currentRoute;
     if (route == null) return;
@@ -144,6 +224,125 @@ class AppState extends ChangeNotifier {
     );
     await _applyStatsUpdate(updated);
     currentRoute = null;
+  }
+
+  List<_SimulationStep> _simulationPath = [];
+  int _simulationStepIndex = 0;
+
+  // totalDuration è solo la durata dell'animazione, non è a velocità di camminata reale
+  void startRouteSimulation({
+    Duration totalDuration = const Duration(seconds: 45),
+    int stepsPerSegment = 30,
+  }) {
+    final route = currentRoute;
+    if (route == null || route.places.isEmpty || isSimulationRunning) return;
+
+    _simulationPath = _buildSimulationPath(
+      route,
+      stepsPerSegment: stepsPerSegment,
+    );
+    _simulationStepIndex = 0;
+
+    isSimulationRunning = true;
+    simulationPlacesReached = 0;
+    simulatedDistanceKm = 0;
+    simulatedCalories = 0;
+    simulatedLatitude = route.startLatitude;
+    simulatedLongitude = route.startLongitude;
+    notifyListeners();
+
+    final tickMs = (totalDuration.inMilliseconds / _simulationPath.length)
+        .round()
+        .clamp(50, 2000);
+    _simulationTimer = Timer.periodic(
+      Duration(milliseconds: tickMs),
+      (_) => _advanceSimulationStep(),
+    );
+  }
+
+  List<_SimulationStep> _buildSimulationPath(
+    SuggestedRoute route, {
+    required int stepsPerSegment,
+  }) {
+    final path = <_SimulationStep>[];
+    var lat = route.startLatitude;
+    var lng = route.startLongitude;
+
+    for (final place in route.places) {
+      for (var i = 1; i <= stepsPerSegment; i++) {
+        final t = i / stepsPerSegment;
+        path.add(
+          _SimulationStep(
+            latitude: lat + (place.latitude - lat) * t,
+            longitude: lng + (place.longitude - lng) * t,
+            reachedPlace: i == stepsPerSegment ? place : null,
+          ),
+        );
+      }
+      lat = place.latitude;
+      lng = place.longitude;
+    }
+    return path;
+  }
+
+  void stopSimulation() {
+    _simulationTimer?.cancel();
+    _simulationTimer = null;
+    isSimulationRunning = false;
+    notifyListeners();
+  }
+
+  Future<void> _advanceSimulationStep() async {
+    if (_simulationStepIndex >= _simulationPath.length) {
+      await _finishSimulation();
+      return;
+    }
+
+    final step = _simulationPath[_simulationStepIndex];
+    final fromLat = simulatedLatitude ?? step.latitude;
+    final fromLng = simulatedLongitude ?? step.longitude;
+
+    simulatedDistanceKm += haversineDistanceKm(
+      fromLat,
+      fromLng,
+      step.latitude,
+      step.longitude,
+    );
+    simulatedCalories = estimateCaloriesForDistance(simulatedDistanceKm);
+    simulatedLatitude = step.latitude;
+    simulatedLongitude = step.longitude;
+    _simulationStepIndex++;
+
+    if (step.reachedPlace != null) {
+      simulationPlacesReached++;
+      await markPlaceVisited(step.reachedPlace!.id);
+    }
+
+    notifyListeners();
+
+    if (_simulationStepIndex >= _simulationPath.length) {
+      await _finishSimulation();
+    }
+  }
+
+  Future<void> _finishSimulation() async {
+    _simulationTimer?.cancel();
+    _simulationTimer = null;
+    isSimulationRunning = false;
+    _simulationPath = [];
+    _simulationStepIndex = 0;
+
+    await completeCurrentRoute();
+
+    simulatedLatitude = null;
+    simulatedLongitude = null;
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _simulationTimer?.cancel();
+    super.dispose();
   }
 
   Future<void> bootstrap() async {
@@ -173,7 +372,8 @@ class AppState extends ChangeNotifier {
   }
 
   Future<void> _restoreSession() async {
-    final savedRouteLengthName = await _storageService.loadPreferredRouteLength();
+    final savedRouteLengthName = await _storageService
+        .loadPreferredRouteLength();
     if (savedRouteLengthName != null) {
       selectedRouteLength = RouteLength.values.firstWhere(
         (length) => length.name == savedRouteLengthName,
@@ -184,17 +384,59 @@ class AppState extends ChangeNotifier {
     final savedUsername = await _storageService.loadUsername();
     if (savedUsername == null || savedUsername.isEmpty) return;
 
-    final savedStats = await _storageService.loadUserStats();
+    final savedStats = await _storageService.loadUserStats(savedUsername);
     username = savedUsername;
     userStats = savedStats ?? UserStats.empty(savedUsername);
   }
 
   Future<void> login(String name) async {
     username = name;
-    userStats ??= UserStats.empty(name);
+    userStats =
+        await _storageService.loadUserStats(name) ?? UserStats.empty(name);
     await _storageService.saveUsername(name);
     await _persistStats();
     notifyListeners();
+  }
+
+  Future<void> logout() async {
+    await _storageService.clearActiveSession();
+    username = null;
+    userStats = null;
+    notifyListeners();
+  }
+
+  Future<String?> registerAccount(String username, String password) async {
+    final trimmedUsername = username.trim();
+    if (trimmedUsername.isEmpty || password.isEmpty) {
+      return 'Inserisci username e password.';
+    }
+
+    final alreadyExists = await _storageService.usernameExists(trimmedUsername);
+    if (alreadyExists) {
+      return 'Username già in uso: scegline un altro.';
+    }
+
+    await _storageService.registerCredentials(trimmedUsername, password);
+    await login(trimmedUsername);
+    return null;
+  }
+
+  Future<String?> loginWithPassword(String username, String password) async {
+    final trimmedUsername = username.trim();
+    if (trimmedUsername.isEmpty || password.isEmpty) {
+      return 'Inserisci username e password.';
+    }
+
+    final valid = await _storageService.verifyCredentials(
+      trimmedUsername,
+      password,
+    );
+    if (!valid) {
+      return 'Username o password non corretti.';
+    }
+
+    await login(trimmedUsername);
+    return null;
   }
 
   void clearLastUnlockedBadgeId() {
@@ -223,11 +465,14 @@ class AppState extends ChangeNotifier {
   }
 
   Future<void> markRestaurantVisited(String restaurantId) async {
-    final exists = restaurants.any((restaurant) => restaurant.id == restaurantId);
+    final exists = restaurants.any(
+      (restaurant) => restaurant.id == restaurantId,
+    );
     if (!exists) return;
 
     final stats = userStats;
-    if (stats == null || stats.visitedRestaurantIds.contains(restaurantId)) return;
+    if (stats == null || stats.visitedRestaurantIds.contains(restaurantId))
+      return;
 
     final updated = stats.copyWith(
       totalPoints: stats.totalPoints + kRestaurantVisitPoints,
@@ -244,13 +489,13 @@ class AppState extends ChangeNotifier {
     await _applyStatsUpdate(updated);
   }
 
-  /// Applica un aggiornamento a [userStats], verifica se sono stati
-  /// sbloccati nuovi badge, salva tutto e notifica la UI.
   Future<void> _applyStatsUpdate(UserStats updated) async {
     final newlyUnlocked = _evaluateNewlyUnlockedBadges(updated);
     final withBadges = newlyUnlocked.isEmpty
         ? updated
-        : updated.copyWith(unlockedBadgeIds: [...updated.unlockedBadgeIds, ...newlyUnlocked]);
+        : updated.copyWith(
+            unlockedBadgeIds: [...updated.unlockedBadgeIds, ...newlyUnlocked],
+          );
 
     userStats = withBadges;
     lastUnlockedBadgeId = newlyUnlocked.isNotEmpty ? newlyUnlocked.last : null;
@@ -290,7 +535,15 @@ class AppState extends ChangeNotifier {
       'review_helper',
       stats.reviews.length >= _BadgeThresholds.reviewHelperReviews,
     );
-    unlockIfNeeded('walking_day', stats.totalSteps >= _BadgeThresholds.walkingDaySteps);
+    unlockIfNeeded(
+      'route_completed',
+      stats.completedRoutes >= _BadgeThresholds.routeCompletedRoutes,
+    );
+    unlockIfNeeded(
+      'sustainable_walker',
+      stats.completedRoutes >= _BadgeThresholds.routeCompletedRoutes &&
+          stats.totalDistanceKm >= _BadgeThresholds.sustainableWalkerDistanceKm,
+    );
 
     return newlyUnlocked;
   }
@@ -303,7 +556,8 @@ class AppState extends ChangeNotifier {
     };
     return places.any(
       (place) =>
-          stats.visitedPlaceIds.contains(place.id) && culturalCategories.contains(place.category),
+          stats.visitedPlaceIds.contains(place.id) &&
+          culturalCategories.contains(place.category),
     );
   }
 
